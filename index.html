@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Valentín 💘</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffebee;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+        .container { width: 90%; max-width: 500px; }
+        h1 { color: #d32f2f; font-size: 2rem; min-height: 80px; }
+        .botones {
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+        #yes { background-color: #ff4081; color: white; }
+        #no { background-color: #9e9e9e; color: white; }
+        .foto-final {
+            width: 100%; max-width: 300px;
+            border: 8px solid white;
+            border-radius: 10px;
+            transform: rotate(-3deg);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="texto">HOLA AMOR ❤️</h1>
+        
+        <div class="botones" id="contenedor-botones">
+            <button id="yes">Sí</button>
+            <button id="no">No</button>
+        </div>
+    </div>
+
+    <audio id="musica" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Variables globales
+        const texto = document.getElementById("texto");
+        const botones = document.getElementById("contenedor-botones");
+        const yesBtn = document.getElementById("yes");
+        const noBtn = document.getElementById("no");
+        const musica = document.getElementById("musica");
+
+        const mensajes = [
+            "Tengo algo que decirte...",
+            "Eres lo mejor que me ha pasado.",
+            "¿Quieres ser mi San Valentín? 🌹"
+        ];
+
+        const frasesNo = ["¿Estás seguro? 🧐", "Piénsalo bien... 🥺", "¡Porfi! 🌹", "Me vas a hacer llorar... 😭", "¡Di que sí! ✨", "¡Ya ni se ve!", "Obligado tonces"];
+
+        let i = 0;
+        let countNo = 0;
+        let scaleSi = 1;
+
+        // Función de secuencia (empieza después del primer mensaje)
+        function iniciarSecuencia() {
+            if (i < mensajes.length) {
+                setTimeout(() => {
+                    texto.innerText = mensajes[i];
+                    i++;
+                    if (i === mensajes.length) {
+                        botones.style.display = "flex";
+                    } else {
+                        iniciarSecuencia();
+                    }
+                }, 2500);
+            }
+        }
+
+        // Lanzar secuencia
+        iniciarSecuencia();
+
+        // Botón NO: se achica, cambia de texto y agranda al SI
+        noBtn.addEventListener("click", () => {
+            scaleSi += 0.5;
+            yesBtn.style.transform = `scale(${scaleSi})`;
+            
+            if (countNo < frasesNo.length) {
+                noBtn.innerText = frasesNo[countNo];
+                countNo++;
+            }
+            
+            let scaleNo = 1 - (countNo * 0.12);
+            if (scaleNo > 0.2) {
+                noBtn.style.transform = `scale(${scaleNo})`;
+            } else {
+                noBtn.style.display = 'none';
+            }
+        });
+
+        // Botón SÍ: Final con mensaje y foto
+        yesBtn.addEventListener("click", () => {
+            musica.play().catch(() => console.log("Audio bloqueado"));
+            
+            document.body.innerHTML = `
+                <div style="background: linear-gradient(#ff80ab, #ff4081); height: 100vh; width: 100vw; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; box-sizing: border-box;">
+                    <h1 style="color: white; font-size: 2.5rem;">¡SABÍA QUE DIRÍAS QUE SÍ! 😍</h1>
+                    <img src="nosotros.jpg" class="foto-final">
+                    <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-top: 15px; max-width: 450px;">
+                        <p style="font-size: 1.3rem; line-height: 1.4;">"De todas las personas en el mundo, siempre te elegiría a ti. Gracias por hacer que cada día se sienta como San Valentín. ¡Te quiero muchísimo!"</p>
+                    </div>
+                    <div style="font-size: 2rem; margin-top: 15px;">🌹 ✨ 🥂</div>
+                </div>
+            `;
+        });
+
+        // Habilitar música con interacción
+        document.addEventListener("click", () => {
+            if(musica.paused) musica.play().then(() => musica.pause());
+        }, { once: true });
+    </script>
+</body>
